@@ -2,26 +2,25 @@ import { ImageResponse } from '@vercel/og'
 import { NextRequest } from 'next/server'
 
 export const config = {
-  runtime: 'experimental-edge',
+  runtime: 'edge',
 }
 
-const backgroundImgSrc = new URL(
-  `../../assets/repo-cover-bg.png`,
-  import.meta.url
-).toString()
+const bgPromise = fetch(
+  new URL(`../../assets/repo-cover-bg.png`, import.meta.url),
+).then(res => res.arrayBuffer())
 
 const fontPromise = fetch(
-  new URL(`../../assets/Lato-Bold.ttf`, import.meta.url)
-).then((res) => res.arrayBuffer())
+  new URL(`../../assets/Lato-Bold.ttf`, import.meta.url),
+).then(res => res.arrayBuffer())
 
 export default async function handler(req: NextRequest) {
   try {
-    const font = await fontPromise
+    const [fontData, bgData] = await Promise.all([fontPromise, bgPromise])
 
-    const url = new URL(req.url)
+    const { searchParams } = req.nextUrl
 
-    const title = url.searchParams.get('title')
-    const subtitle = url.searchParams.get('subtitle')
+    const title = searchParams.get('title')
+    const subtitle = searchParams.get('subtitle')
 
     return new ImageResponse(
       (
@@ -37,7 +36,8 @@ export default async function handler(req: NextRequest) {
         >
           <img
             alt="avatar"
-            src={backgroundImgSrc}
+            // @ts-expect-error - src as ArrayBuffer is not recognized by TS
+            src={bgData}
             tw="w-full h-full inset-0 absolute"
           />
           <div tw="flex flex-col px-[120px] w-full items-end">
@@ -54,12 +54,12 @@ export default async function handler(req: NextRequest) {
         fonts: [
           {
             name: 'Lato',
-            data: font,
+            data: fontData,
             weight: 700,
             style: 'normal',
           },
         ],
-      }
+      },
     )
   } catch (e: any) {
     console.log(e)
