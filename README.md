@@ -1,4 +1,4 @@
-# peya-cover-bg 🖼
+# peya-cover-og 🖼
 
 - **Framework**: [Next.js](https://nextjs.org)
 - **Deployment**: [Vercel](https://vercel.com)
