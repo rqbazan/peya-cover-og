@@ -1,3 +1,5 @@
+> **Warning** This repo is outdated and only keep it fo backward compatibility. Please use [peya-img-gen](https://github.com/rqbazan/peya-img-gen) for new projects.
+
 # peya-cover-og 🖼
 
 - **Framework**: [Next.js](https://nextjs.org)
